@@ -1,0 +1,37 @@
+.training-log-list {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .training-log-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .training-log-list li {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    font-size: 0.95em;
+    color: #333;
+  }
+  
+  .training-log-list li:last-child {
+    border-bottom: none; /* 最後の項目は線なし */
+  }
+  
+  .log-date {
+    font-weight: bold;
+    margin-right: 5px;
+    color: #777;
+  }
+  
+  .log-exercise {
+    font-weight: bold;
+  }
+  
+  .log-details {
+    color: #555;
+  }
