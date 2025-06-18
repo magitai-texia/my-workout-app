@@ -1,7 +1,6 @@
-import React from 'react';
-import './TrainingLogList.css'; // 後でスタイルを作成
+import React, { useState } from 'react';
+import './TrainingLogList.css';
 
-// App.tsxで定義したTrainingLog型をインポート（またはここで再定義）
 interface TrainingLog {
   id: string;
   date: string;
@@ -11,30 +10,33 @@ interface TrainingLog {
 }
 
 interface Props {
-  logs: TrainingLog[]; // App.tsx から渡される記録の配列
+  logs: TrainingLog[];
+  title?: string;
+  limit?: number;
 }
 
-function TrainingLogList({ logs }: Props) {
-  if (logs.length === 0) {
-    return <p>まだ記録がありません。</p>;
-  }
-
-  // 新しい記録が上に表示されるように逆順にする
+function TrainingLogList({ logs, title = "トレーニングログ", limit }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
   const reversedLogs = [...logs].reverse();
+  const displayedLogs = limit ? reversedLogs.slice(0, limit) : reversedLogs;
 
   return (
-    <div className="training-log-list">
-      <h2>トレーニングログ</h2>
-      <ul>
-        {/* 配列の map メソッドで各記録をリスト項目(li)に変換して表示 */}
-        {reversedLogs.map((log) => (
-          <li key={log.id}> {/* key はReactがリスト項目を識別するために必要 */}
-            <span className="log-date">{log.date}</span> -{' '}
-            <span className="log-exercise">{log.exercise}</span>:{' '}
-            <span className="log-details">{log.reps}回 x {log.sets}セット</span>
-          </li>
-        ))}
-      </ul>
+    <div className="training-log-list accordion">
+      <h2 onClick={() => setIsOpen(!isOpen)} className="accordion-title">
+        {title} {isOpen ? "▲" : "▼"}
+      </h2>
+
+      {isOpen && (
+        <ul className="accordion-content">
+          {displayedLogs.map((log) => (
+            <li key={log.id}>
+              <span className="log-date">{log.date}</span> -
+              <span className="log-exercise">{log.exercise}</span>:
+              <span className="log-details">{log.reps}回 x {log.sets}セット</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

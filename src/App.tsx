@@ -1,9 +1,10 @@
 // src/App.tsx
 import React, { useState, useEffect } from 'react';
-import './App.css'; // スタイル用 (後で作成)
-import StatusBar from './components/StatusBar'; // 後で作る
-import TrainingInputForm from './components/TrainingInputForm'; // 後で作る
-import TrainingLogList from './components/TrainingLogList'; // 後で作る
+import './App.css'; 
+import StatusBar from './components/StatusBar'; 
+import TrainingInputForm from './components/TrainingInputForm'; 
+import TrainingLogList from './components/TrainingLogList'; 
+import GymLogo from './components/GymLogo';
 
 // 筋トレ記録の型を定義
 interface TrainingLog {
@@ -16,18 +17,14 @@ interface TrainingLog {
 }
 
 // レベルアップに必要な経験値テーブル (例)
-const EXP_THRESHOLDS: { [level: number]: number } = {
-  1: 100, // レベル1→2 には100 EXP必要
-  2: 250, // レベル2→3 には250 EXP必要
-  3: 500, // レベル3→4 には500 EXP必要
-  // ... 必要に応じて追加
-};
-
+const getExpForLevel = (level: number) => 100 * Math.pow(2, level - 1);
 
 function App() {
   // --- 状態定義 ---
   // useState<型>(初期値) の形で定義します
   // () => { ... } は初回読み込み時にLocalStorageから値を取得する処理
+  const [showLevelUpModal, setShowLevelUpModal] = useState(false);
+
   const [level, setLevel] = useState<number>(() => {
     const savedLevel = localStorage.getItem('level'); // LocalStorageから読み込み試行
     return savedLevel ? parseInt(savedLevel, 10) : 1; // あれば数値に変換、なければ初期値1
@@ -73,18 +70,25 @@ function App() {
 
     // --- 経験値計算 ---
     // ここでは簡単な計算例: 回数 * セット数 * 1 EXP
-    const earnedExp = newLog.reps * newLog.sets * 1;
+    const earnedExp = newLog.reps * newLog.sets * 2;
     let currentExp = experience + earnedExp; // 現在の経験値に加算
     let currentLevel = level;
-    let requiredExp = EXP_THRESHOLDS[currentLevel] || Infinity; // 次のレベルに必要な経験値 (なければ Infinity)
+    let requiredExp = getExpForLevel(currentLevel);
 
     // --- レベルアップ処理 ---
     // 必要な経験値を超えている間、ループしてレベルアップ
     while (currentExp >= requiredExp) {
       currentLevel++; // レベルを1上げる
       currentExp -= requiredExp; // レベルアップに必要な経験値を引く
-      requiredExp = EXP_THRESHOLDS[currentLevel] || Infinity; // 次のレベルの必要経験値を再設定
+      requiredExp = getExpForLevel(currentLevel);
       console.log(`レベルアップ！ Level ${currentLevel} になりました！`); // コンソールに表示（実際は画面に通知など）
+    }
+    // ✅ レベルが上がったときだけモーダル表示
+    if (currentLevel > level) {
+      setShowLevelUpModal(true);
+      setTimeout(() => {
+        setShowLevelUpModal(false);
+      }, 3000);
     }
 
     // 計算後のレベルと経験値をセット
@@ -93,43 +97,30 @@ function App() {
   };
 
   // 次のレベルに必要な経験値を取得
-  const nextLevelExp = EXP_THRESHOLDS[level] || experience; // 次のレベルが定義されていなければ現在の経験値を使う（満タン表示用）
+  const nextLevelExp = getExpForLevel(level);
 
 
   // --- 画面に表示する内容 ---
   return (
     <div className="App">
-      <h1>筋トレ レベルアップ アプリ</h1>
+      <GymLogo />
+      <h1>Work Out Memo</h1>
 
       {/* 後で作成するコンポーネントを配置 */}
       { <StatusBar level={level} experience={experience} nextLevelExp={nextLevelExp} /> }
       { <TrainingInputForm onAddTraining={handleAddTraining} /> }
-      { <TrainingLogList logs={trainings} /> }
 
-      {/* ↓↓↓ 動作確認用に仮表示 ↓↓↓ */}
-      <div>
-        <h2>ステータス</h2>
-        <p>レベル: {level}</p>
-        <p>経験値: {experience} / {nextLevelExp}</p>
-      </div>
-      <div>
-        <h2>記録入力 (仮)</h2>
-        <button onClick={() => handleAddTraining({ exercise: '腕立て伏せ', reps: 10, sets: 3 })}>
-          腕立て伏せ 10回x3セット 記録 (+30 EXP)
-        </button>
-      </div>
-      <div>
-        <h2>記録ログ (仮)</h2>
-        <ul>
-          {trainings.map(log => (
-            <li key={log.id}>
-              {log.date} - {log.exercise}: {log.reps}回 x {log.sets}セット
-            </li>
-          ))}
-        </ul>
-      </div>
-       {/* ↑↑↑ 動作確認用に仮表示 ↑↑↑ */}
-
+      { <TrainingLogList title="トレーニングログ" limit={5} logs={trainings} /> }
+      {<TrainingLogList title="記録ログ" limit={10} logs={trainings} />}
+        
+      {showLevelUpModal && (
+        <div className="level-up-modal" onClick={() => setShowLevelUpModal(false)}>
+          <div className="modal-content">
+            <h2>🎉 LEVEL UP!</h2>
+            <p>レベル {level} に到達しました！</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

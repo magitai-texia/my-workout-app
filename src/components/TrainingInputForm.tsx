@@ -68,7 +68,7 @@ function TrainingInputForm({ onAddTraining }: Props) {
           min="1"
         />
       </div>
-      <button type="submit">記録する</button>
+      <button type="submit">トレーニングを記録する</button>
     </form>
   );
 }

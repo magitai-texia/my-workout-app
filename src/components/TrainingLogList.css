@@ -1,5 +1,6 @@
 .training-log-list {
-    background-color: #fff;
+    background-color: #1f1f1f;
+    color: #f9f9f9;
     padding: 15px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -12,10 +13,24 @@
   }
   
   .training-log-list li {
-    border-bottom: 1px solid #eee;
-    padding: 10px 0;
-    font-size: 0.95em;
-    color: #333;
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+    border-radius: 8px;
+    border-bottom: 1px solid #333;
+    padding: 4px 0;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    color: #f0f0f0;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: transform 0.2s ease;
+  }
+
+  .training-log-list li:hover {
+    transform: scale(1.02);
+    border-color: #e53935;
   }
   
   .training-log-list li:last-child {
@@ -23,15 +38,41 @@
   }
   
   .log-date {
-    font-weight: bold;
-    margin-right: 5px;
-    color: #777;
+    font-size: 0.9em;
+    color: #aaa;
+    font-weight: 500;
   }
   
   .log-exercise {
+    font-size: 1.1em;
     font-weight: bold;
+    color: #e53935;
+    letter-spacing: 0.5px;
   }
   
   .log-details {
-    color: #555;
+    color: #ccc;
+    font-size: 0.95em;
   }
+
+.accordion {
+  margin-bottom: 20px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background-color: #1a1a1a;
+}
+
+.accordion-title {
+  cursor: pointer;
+  padding: 10px 14px;
+  background-color: #333;
+  color: #fff;
+  font-size: 1rem;
+  user-select: none;
+}
+
+.accordion-content {
+  padding: 10px 14px;
+  font-size: 0.9em;
+  color: #ccc;
+}
