@@ -1,9 +1,11 @@
 // src/App.tsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css'; 
 import StatusBar from './components/StatusBar'; 
 import TrainingInputForm from './components/TrainingInputForm'; 
 import TrainingLogList from './components/TrainingLogList'; 
+import WeightChart from './components/WeightChart';
+import DailyLogList from './components/DailyLogList';
 import GymLogo from './components/GymLogo';
 
 // 筋トレ記録の型を定義
@@ -11,13 +13,13 @@ interface TrainingLog {
   id: string; // 記録を一意に識別するID
   date: string; // 記録日
   exercise: string; // 種目名
+  weight: number; // ← 重量を追加！
   reps: number; // 回数
   sets: number; // セット数
-  // 必要であれば weight（重量）なども追加
 }
 
 // レベルアップに必要な経験値テーブル (例)
-const getExpForLevel = (level: number) => 100 * Math.pow(2, level - 1);
+const getExpForLevel = (level: number) => 100 + (level - 1) * 100;
 
 function App() {
   // --- 状態定義 ---
@@ -40,6 +42,8 @@ function App() {
     return savedTrainings ? JSON.parse(savedTrainings) : []; // なければ空の配列
   });
 
+  const [selectedExercise, setSelectedExercise] = useState<string>('ベンチプレス');
+
   // --- LocalStorageへの保存処理 ---
   // useEffectは、[ ] 内の変数が変化した"後"に実行されるフック
   useEffect(() => {
@@ -57,7 +61,12 @@ function App() {
 
   // --- 新しいトレーニング記録を追加する関数 ---
   // (この関数は TrainingInputForm から呼び出される)
-  const handleAddTraining = (newTrainingData: Omit<TrainingLog, 'id' | 'date'>) => {
+  const handleAddTraining = (newTrainingData: {
+    exercise: string;
+    weight: number;
+    reps: number;
+    sets: number;
+  }) => {
     // 新しい記録オブジェクトを作成
     const newLog: TrainingLog = {
       ...newTrainingData,
@@ -99,6 +108,13 @@ function App() {
   // 次のレベルに必要な経験値を取得
   const nextLevelExp = getExpForLevel(level);
 
+  // トレーニングログを削除する関数
+  const handleDeleteTraining = (id: string) => {
+    const confirmDelete = window.confirm("この記録を削除しますか？");
+    if (!confirmDelete) return;
+
+    setTrainings(prevLogs => prevLogs.filter(log => log.id !== id));
+  };
 
   // --- 画面に表示する内容 ---
   return (
@@ -106,12 +122,29 @@ function App() {
       <GymLogo />
       <h1>Work Out Memo</h1>
 
-      {/* 後で作成するコンポーネントを配置 */}
+      {/* コンポーネントを配置 */}
       { <StatusBar level={level} experience={experience} nextLevelExp={nextLevelExp} /> }
       { <TrainingInputForm onAddTraining={handleAddTraining} /> }
 
-      { <TrainingLogList title="トレーニングログ" limit={5} logs={trainings} /> }
-      {<TrainingLogList title="記録ログ" limit={10} logs={trainings} />}
+      { <TrainingLogList title="今日のトレログ" limit={4} logs={trainings} onDelete={handleDeleteTraining} /> }
+      { <DailyLogList logs={trainings} onDelete={handleDeleteTraining} title="記録ログ（日別）" /> } 
+
+
+      <div>
+        <label>表示する種目: </label>
+        <select
+          value={selectedExercise}
+          onChange={(e) => setSelectedExercise(e.target.value)}
+        >
+          {Array.from(new Set(trainings.map((log) => log.exercise))).map((exercise) => (
+            <option key={exercise} value={exercise}>
+              {exercise}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <WeightChart logs={trainings} selectedExercise={selectedExercise} />
         
       {showLevelUpModal && (
         <div className="level-up-modal" onClick={() => setShowLevelUpModal(false)}>

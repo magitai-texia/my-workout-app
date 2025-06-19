@@ -118,6 +118,40 @@ body {
   animation: popIn 0.4s ease-out;
 }
 
+.daily-log-section {
+  margin-top: 2rem;
+}
+
+.daily-log-item {
+  margin-bottom: 1rem;
+}
+
+.accordion-subtitle {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.log-list {
+  list-style: none;
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.log-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
 @keyframes popIn {
   0% {
     transform: scale(0.6);

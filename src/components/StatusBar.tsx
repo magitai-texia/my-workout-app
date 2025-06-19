@@ -1,4 +1,3 @@
-import React from 'react';
 import './StatusBar.css'; // 後でスタイルを作成
 
 interface Props {

@@ -1,5 +1,4 @@
 // src/components/GymLogo.tsx
-import React from 'react';
 
 export default function GymLogo() {
   return (

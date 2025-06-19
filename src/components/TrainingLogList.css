@@ -55,6 +55,26 @@
     font-size: 0.95em;
   }
 
+  .delete-button {
+  font-size: 14px;
+  padding: 0;
+  margin-left: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+  width: auto;
+  display: inline-block; /* inline-blockにしてみる */
+  line-height: 1;
+}
+
+/* 追加で親要素のliをinline-flex化してみる */
+.training-log-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* 子要素の間隔 */
+}
+
 .accordion {
   margin-bottom: 20px;
   border: 1px solid #444;
@@ -76,3 +96,4 @@
   font-size: 0.9em;
   color: #ccc;
 }
+
